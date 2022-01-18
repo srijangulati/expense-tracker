@@ -26,6 +26,7 @@ export function AddExpense(props) {
       cost: parseInt(cost),
       notes: notes,
       name: name,
+      date: Date.now()
     }))
     props.close();
   };
