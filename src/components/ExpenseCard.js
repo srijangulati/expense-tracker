@@ -9,12 +9,18 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { AddExpense } from "./AddExpense";
+import { ViewExpenses } from "./VewiExpenses";
 
-export default function ExpenseCard(props) {
+export default function ExpenseCard({name}) {
   const [openExpense, setOpenExpense] = useState(false);
+  const [viewExpenses, setViewExpenses] = useState(false);
 
   const closeExpense = () => setOpenExpense(false);
+  const closeViewExpenses = () => setViewExpenses(false);
+
+  const categoryData = useSelector(state => state.expense.categories[name]);
 
   const style = {
     position: "absolute",
@@ -25,10 +31,15 @@ export default function ExpenseCard(props) {
     boxShadow: 24,
     padding: "1.3rem",
     background: "white",
-    borderRadius: '.5rem'
+    borderRadius: '.5rem',
   };
 
-  const value = (props.spend / props.max) * 100;
+  const tableState = {
+    ...style,
+    width: 'auto'
+  };
+
+  const value = (categoryData.cost / categoryData.limit) * 100;
 
   const getColor = () => {
     switch (true) {
@@ -44,8 +55,8 @@ export default function ExpenseCard(props) {
     <>
       <Card variant="outlined" style={{ margin: "1.6rem" }}>
         <CardHeader
-          title={props.name}
-          subheader={`${props.spend} / ${props.max}`}
+          title={categoryData.label}
+          subheader={`${categoryData.cost} / ${categoryData.limit}`}
         />
         <CardContent>
           <LinearProgress
@@ -56,16 +67,24 @@ export default function ExpenseCard(props) {
           />
         </CardContent>
         <CardActions style={{ justifyContent: "flex-end" }}>
-          <Button> View expenses</Button>
+          <Button onClick={() => setViewExpenses(true)}> View expenses</Button>
           <Button onClick={() => setOpenExpense(true)}> Add expense</Button>
         </CardActions>
       </Card>
 
       <Modal open={openExpense} onClose={closeExpense}>
         <Box style={style}>
-          <AddExpense close={closeExpense}></AddExpense>
+          <AddExpense categoryName={name} close={closeExpense}></AddExpense>
         </Box>
       </Modal>
+
+      <Modal open={viewExpenses} onClose={closeViewExpenses}>
+        <Box style={tableState}>
+          <ViewExpenses name={name} close={closeViewExpenses}></ViewExpenses>
+        </Box>
+      </Modal>
+
+
     </>
   );
 }

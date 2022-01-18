@@ -1,10 +1,13 @@
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addExpense } from '../actions/expenseActions';
 
 export function AddExpense(props) {
   const [name, setName] = useState("");
-  const [cost, setCost] = useState();
+  const [cost, setCost] = useState("");
   const [notes, setNotes] = useState("");
+  const dispatch = useDispatch();
 
   const onChangeName = (event) => {
     setName(event.target.value);
@@ -18,11 +21,18 @@ export function AddExpense(props) {
   };
 
   const add = () => {
+    dispatch(addExpense({
+      category: props.categoryName,
+      cost: parseInt(cost),
+      notes: notes,
+      name: name,
+    }))
     props.close();
-  }
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: ".5rem" }}>
+      <h4> Add Expense </h4>
       <TextField
         style={{ width: "100%" }}
         value={name}
@@ -47,7 +57,7 @@ export function AddExpense(props) {
         rows={3}
         variant="outlined"
       />
-      <Button onClick={add} > Add </Button>
+      <Button onClick={add}> Add </Button>
     </div>
   );
 }

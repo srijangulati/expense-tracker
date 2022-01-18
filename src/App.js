@@ -1,12 +1,15 @@
 import { Button, Modal } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import AddCategory from "./components/AddCategory";
 import ExpenseCard from "./components/ExpenseCard";
 
 function App() {
   const [addCategory, setAddCategory] = useState(false);
   const closeAddCategory = () => setAddCategory(false);
+
+  const categories = useSelector((state) => state.expense.categoryOrder);
 
   const style = {
     position: "absolute",
@@ -26,10 +29,12 @@ function App() {
     style={{display: 'flex', marginInline: 'auto 1.3rem'}} 
     onClick={() => setAddCategory(true)}
     > Add Category</Button>
-    <ExpenseCard name="Food" spend={600} max={1000}></ExpenseCard>
+    {
+      categories.map((category) => <ExpenseCard key={category} name={category}></ExpenseCard>)
+    }
     <Modal open={addCategory} onClose={closeAddCategory}>
         <Box style={style}>
-          <AddCategory></AddCategory>
+          <AddCategory close={closeAddCategory}></AddCategory>
         </Box>
       </Modal>
     </>
